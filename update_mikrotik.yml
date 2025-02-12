@@ -1,0 +1,14 @@
+---
+    - name: Update MikroTik Routers
+      hosts: localhost
+      gather_facts: no
+      vars_files:
+        - login.yml
+        - routers.yml
+    
+      tasks:
+        - name: Update MikroTik firmware
+          ansible.builtin.command: >
+            sshpass -p "{{ credentials.password }}" ssh -o StrictHostKeyChecking=no -p {{ item.port }} {{ credentials.username }}@{{ item.ip }}
+            "/system/package/update/set channel=stable; /system package update check-for-updates; /system package update install;"
+          with_items: "{{ routers }}"    
